@@ -1,8 +1,8 @@
 export const loans = [
   {
     id: 'LC-2024-001',
-    applicant: 'สมชาย ใจดี',
-    phone: '081-234-5678',
+    applicant: 'Customer 01',
+    phone: '0XX-XXX-XX01',
     amount: 2500000,
     stage: 'รอเอกสาร',
     trustLevel: 78,
@@ -13,8 +13,8 @@ export const loans = [
   },
   {
     id: 'LC-2024-002',
-    applicant: 'วิภา รักงาน',
-    phone: '089-876-5432',
+    applicant: 'Customer 02',
+    phone: '0XX-XXX-XX02',
     amount: 1800000,
     stage: 'พิจารณา',
     trustLevel: 91,
@@ -25,8 +25,8 @@ export const loans = [
   },
   {
     id: 'LC-2024-003',
-    applicant: 'ประสิทธิ์ มั่นใจ',
-    phone: '062-111-2233',
+    applicant: 'Customer 03',
+    phone: '0XX-XXX-XX03',
     amount: 3200000,
     stage: 'อนุมัติ',
     trustLevel: 95,
@@ -37,8 +37,8 @@ export const loans = [
   },
   {
     id: 'LC-2024-004',
-    applicant: 'นภา สวยงาม',
-    phone: '095-444-7788',
+    applicant: 'Customer 04',
+    phone: '0XX-XXX-XX04',
     amount: 900000,
     stage: 'รอเอกสาร',
     trustLevel: 62,

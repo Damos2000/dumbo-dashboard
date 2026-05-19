@@ -59,10 +59,10 @@ export default function Sidebar({ activePage, onNavigate }) {
       <div className="px-4 py-4 border-t border-white/10">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-purple-700 flex items-center justify-center text-xs font-bold">
-            SP
+            LO
           </div>
           <div>
-            <div className="text-sm font-medium leading-tight">Siriporn P.</div>
+            <div className="text-sm font-medium leading-tight">Officer 01</div>
             <div className="text-xs text-gray-400">Loan Officer</div>
           </div>
         </div>
