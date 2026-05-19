@@ -14,10 +14,10 @@ export default function Sidebar({ activePage, onNavigate }) {
       <div className="px-5 py-5 border-b border-white/10">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-purple-600 flex items-center justify-center text-white font-bold text-sm">
-            SC
+            DP
           </div>
           <div>
-            <div className="font-semibold text-sm leading-tight">Smart Credit</div>
+            <div className="font-semibold text-sm leading-tight">Dumbo Portal</div>
             <div className="text-xs text-gray-400">Officer Portal</div>
           </div>
         </div>
