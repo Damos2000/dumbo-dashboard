@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   loans, TAB_FILTERS,
   phaseColors, phaseDotColors,
@@ -49,19 +49,123 @@ function Stepper({ phase }) {
   )
 }
 
-/* ─── Doc list ────────────────────────────────────────────────────── */
+/* ─── Image placeholder icon ──────────────────────────────────────── */
+function ImageIcon({ size = 32 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#6B7280" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+      <circle cx="8.5" cy="9" r="1.5" />
+      <path d="M21 15l-5-5L5 21" />
+    </svg>
+  )
+}
+
+/* ─── Preview image modal ──────────────────────────────────────────────── */
+function Lightbox({ label, onClose }) {
+  useEffect(() => {
+    const onKey = (e) => { if (e.key === 'Escape') onClose() }
+    document.addEventListener('keydown', onKey)
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prev
+    }
+  }, [onClose])
+
+  return (
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-6"
+      style={{ background: 'rgba(13,27,42,0.78)' }}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-white rounded-xl shadow-2xl max-w-xl w-full p-6 relative"
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm flex items-center justify-center transition-colors"
+          aria-label="ปิด"
+        >
+          ✕
+        </button>
+        <h3 className="text-sm font-semibold text-slate-800 mb-4 pr-8">{label}</h3>
+        <div className="aspect-[4/3] rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-center">
+          <ImageIcon size={96} /> {/* add full sizeimage preview here */}
+        </div>
+        <p className="text-[10px] text-slate-400 mt-3 text-center">กด ESC หรือคลิกพื้นที่ว่างเพื่อปิด</p>
+      </div>
+    </div>
+  )
+}
+
+/* ─── Doc list (each row is its own accordion) ────────────────────── */
 function DocList({ docObj }) {
+  const [openKeys, setOpenKeys] = useState(() => new Set())
+  const [preview, setPreview]   = useState(null)
+
   if (!docObj) return <p className="text-center text-xs text-slate-400 py-3">ยังไม่มีเอกสาร</p>
+
+  const toggle = (key) => setOpenKeys((prev) => {
+    const next = new Set(prev)
+    next.has(key) ? next.delete(key) : next.add(key)
+    return next
+  })
+
   return (
     <div className="flex flex-col gap-1.5">
-      {Object.entries(docObj).map(([key, val]) => (
-        <div key={key} className="flex items-center justify-between px-2.5 py-1.5 rounded-md bg-slate-50">
-          <span className="text-sm text-slate-700">{DOC_LABELS[key]}</span>
-          {val === true  && <span className="text-xs font-semibold text-emerald-600">✓ ผ่าน</span>}
-          {val === false && <span className="text-xs font-semibold text-red-500">✗ ไม่ผ่าน</span>}
-          {val === null  && <span className="text-xs text-slate-400">— ไม่ต้องการ</span>}
-        </div>
-      ))}
+      {Object.entries(docObj).map(([key, val]) => {
+        const isOpen = openKeys.has(key)
+        return (
+          <div key={key} className="rounded-md bg-slate-50 overflow-hidden">
+            <div
+              onClick={(e) => { e.stopPropagation(); toggle(key) }}
+              className={`flex items-center justify-between px-2.5 py-1.5 ${val != null ? 'hover:bg-slate-100 transition-colors' : ''}  ${isOpen && val != null ? 'bg-slate-100' : ''}`}
+            >
+              <div className="flex items-center gap-1.5">
+                {val != null && (
+                  <span
+                    className="text-slate-400 text-sm inline-block transition-transform duration-200"
+                    style={{ transform: isOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}
+                  >
+                    ›
+                  </span>
+                )}
+                <span className={`text-sm ${val != null ? '' : 'pl-2'} text-slate-700 `}>{DOC_LABELS[key]}</span>
+              </div>
+              {val === true  && <span className="text-xs font-semibold text-emerald-600">✓ ผ่าน</span>}
+              {val === false && <span className="text-xs font-semibold text-red-500">✗ ไม่ผ่าน</span>}
+              {val === null  && <span className="text-xs text-slate-400">— ไม่ต้องการ</span>}
+            </div>
+            {isOpen && val != null && (
+              <div className="px-6 py-3 bg-slate-50 border-t border-slate-200">
+                <p className="text-xs font-normal text-slate-800 mb-2">รูปที่อัพโหลด</p>
+                <div className="flex flex-wrap gap-2">
+                  {[0, 1].map((i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setPreview({ label: `${DOC_LABELS[key]} (${i + 1})` })
+                      }}
+                      className="w-20 h-20 rounded-lg flex items-center justify-center cursor-zoom-in hover:ring-2 hover:ring-purple-300 transition-all"
+                      style={{ background: '#ffffff' }}
+                      aria-label={`ดู${DOC_LABELS[key]}ขนาดใหญ่`}
+                    >
+                      <ImageIcon /> {/* add small size image preview here */}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )
+      })}
+      {preview && (
+        <Lightbox label={preview.label} onClose={() => setPreview(null)} />
+      )}
     </div>
   )
 }
