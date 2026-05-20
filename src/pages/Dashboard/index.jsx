@@ -14,10 +14,10 @@ export default function Dashboard() {
     return () => clearInterval(t)
   }, [])
 
-  const total = loans.length
-  const pending = loans.filter((l) => l.stage === 'รอเอกสาร').length
-  const reviewing = loans.filter((l) => l.stage === 'พิจารณา').length
-  const approved = loans.filter((l) => l.stage === 'อนุมัติ').length
+  const total     = loans.length
+  const pending   = loans.filter((l) => ['product_inquire', 'doc_review'].includes(l.phase)).length
+  const reviewing = loans.filter((l) => ['pre_approve', 'offer'].includes(l.phase)).length
+  const approved  = loans.filter((l) => l.decision === 'approved').length
 
   return (
     <div className="space-y-6" style={{ padding: '2rem 2.5rem' }}>
