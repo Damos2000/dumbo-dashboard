@@ -1,7 +1,7 @@
-import { loans, getTrustColor, getTrustBg } from '../../data/loans'
+import { loans, trustColors, TAB_FILTERS } from '../../data/loans'
 
 export default function CreditReview() {
-  const pending = loans.filter((l) => l.stage === 'พิจารณา')
+  const pending = loans.filter(TAB_FILTERS['พิจารณา'])
 
   return (
     <div className="p-8 space-y-6">
@@ -20,14 +20,9 @@ export default function CreditReview() {
               <div className="flex items-start justify-between">
                 <div>
                   <div className="font-semibold text-gray-900">{loan.applicant}</div>
-                  <div className="text-xs text-gray-400 mt-0.5">{loan.id} · {loan.amount.toLocaleString('th-TH')} บาท</div>
+                  <div className="text-xs text-gray-400 mt-0.5">{loan.id}{loan.amount ? ` · ${loan.amount} บาท` : ''}</div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-32 h-2 rounded-full bg-gray-200 overflow-hidden">
-                    <div className={`h-full rounded-full ${getTrustBg(loan.trustLevel)}`} style={{ width: `${loan.trustLevel}%` }} />
-                  </div>
-                  <span className={`text-sm font-bold ${getTrustColor(loan.trustLevel)}`}>{loan.trustLevel}</span>
-                </div>
+                <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${trustColors[loan.trust]}`}>{loan.trust}</span>
               </div>
               <div className="flex gap-3 mt-4">
                 <button className="px-4 py-2 rounded-lg bg-purple-600 text-white text-sm font-medium hover:bg-purple-700 transition-colors">
